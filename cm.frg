@@ -1,5 +1,13 @@
 #lang forge
 
+// I think the easiest way to model things changing over time
+// is to just have a time class and then write things as a
+// function of time
+one sig Hour{
+  tick: lone Hour
+}
+// I can't call it Time because that's a resserved word for temporal forge
+
 // at its most abstract, a card is just a tuple
 abstract sig Suit {}
 abstract sig Month {}
@@ -14,7 +22,9 @@ sig Card {
 }
 
 sig Player {
-  hand: set Card
+  hand: set Hour -> Card
+  // in my head it's "time -> (set Card)"
+  // but that's equivalent to a relation between Hours and Cards
 }
 
 sig CardOrdering {
@@ -36,7 +46,7 @@ pred initial {
     reachable[c, Deck.top, next, card]
   }
   all p: Player | {
-    no hand
+    no hand[Hour]
   }
   no Table.cards
 }
