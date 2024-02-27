@@ -1,47 +1,115 @@
 #lang forge
 
 // at its most abstract, a card is just a tuple
-sig Suite { }
-sig Month { }
+abstract sig Suit {}
+abstract sig Month {}
+
+one sig Bright, Animal, Ribbon, Junk, DoubleJunk extends Suit {}
+one sig Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec extends Month {}
+
 
 sig Card {
-  suite: Suite
-  month: Month
+  suit: one Suit,
+  month: one Month
 }
 
-sig Hand {
-  holds: set Card
+sig Player {
+  hand: set Card
 }
 
-sig Node {}
-sig Nil extends Node {}
-sig Cons {
-  head: Card
-  tail: Node
+sig CardOrdering {
+  card: one Card,
+  next: lone CardOrdering
 }
 
-// TODO: should this be an array instead?
-sig Deck {
-  top: Node
+one sig Deck {
+  top: lone CardOrdering
+}
+
+one sig Table {
+  cards: set Card
+}
+
+pred initial {
+  some Deck.top
+  all c: Card | {
+    reachable[c, Deck.top, next, card]
+  }
+  all p: Player | {
+    no hand
+  }
+  no Table.cards
 }
 
 pred pop[pre, post: Deck, card: Card] {
-  card     = pre.top.head
-  post.top = pre.top.tail
+  card = pre.top.card
+  post.top = pre.top.next
 }
 
-sig Player { }
+pred twoJunkUnlessDec {
+  #{card: Card | card.month = Jan and card.suit = Junk} = 2
+  #{card: Card | card.month = Feb and card.suit = Junk} = 2
+  #{card: Card | card.month = Mar and card.suit = Junk} = 2
+  #{card: Card | card.month = Apr and card.suit = Junk} = 2
+  #{card: Card | card.month = May and card.suit = Junk} = 2
+  #{card: Card | card.month = Jun and card.suit = Junk} = 2
+  #{card: Card | card.month = Jul and card.suit = Junk} = 2
+  #{card: Card | card.month = Aug and card.suit = Junk} = 2
+  #{card: Card | card.month = Sep and card.suit = Junk} = 2
+  #{card: Card | card.month = Oct and card.suit = Junk} = 2
+  #{card: Card | card.month = Nov and card.suit = Junk} = 2
+}
+
+pred fourOfEachSuite {
+  #{card: Card | card.month = Jan} = 4
+  #{card: Card | card.month = Feb} = 4
+  #{card: Card | card.month = Mar} = 4
+  #{card: Card | card.month = Apr} = 4
+  #{card: Card | card.month = May} = 4
+  #{card: Card | card.month = Jun} = 4
+  #{card: Card | card.month = Jul} = 4
+  #{card: Card | card.month = Aug} = 4
+  #{card: Card | card.month = Sep} = 4
+  #{card: Card | card.month = Oct} = 4
+  #{card: Card | card.month = Nov} = 4
+  #{card: Card | card.month = Dec} = 4
+}
+
+pred suitMonthCombo {
+  all c: Card | {
+    (c.month = Jan or c.month = Mar) 
+    implies c.suit != Animal and c.suit != DoubleJunk
+    
+    (c.month = Feb or 
+    c.month = Apr or 
+    c.month = Jun or 
+    c.month = Jul or 
+    c.month = Oct) 
+    implies c.suit != Bright and c.suit != DoubleJunk
+
+    (c.month = May or c.month = Sep) 
+    implies c.suit != Bright and c.suit != Animal
+
+    c.month = Aug implies c.suit != Ribbon and c.suit != DoubleJunk
+
+    c.month = Nov implies c.suit != Animal and c.suit != Ribbon
+
+    c.month = Dec implies c.suit != Ribbon
+  }
+}
+
+pred cardWellformed {
+  fourOfEachSuite
+  twoJunkUnlessDec
+  suitMonthCombo
+}
 
 sig Score { }
 
-//I'm not sure how to do this
-sig State {
-  deck  : Deck
-  hands : Player -> Hand
-  scores: Player -> Score
-  table : set Card
-}
 
+run {
+  cardWellformed
+} for exactly 48 Card
 
 // Play begins with the dealer and continues counterclockwise.
 // A turn begins with a player attempting to match one of the cards lying
@@ -50,7 +118,7 @@ sig State {
 // player may select one of them. If the player has no cards matching
 // the cards on the table, the player discards a card to the table.
 
-pred same_month[x,y: State] { x.month = y.month }
+pred same_month[x,y: Card] { x.month = y.month }
 
 // TODO: I think there's a way to rewrite these using just relational algebra
 // like a projection and intersect or something
