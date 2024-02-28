@@ -33,7 +33,7 @@ sig CardOrdering {
 }
 
 one sig Deck {
-  top: set Hour -> CardOrdering
+  top: one Hour -> CardOrdering
 }
 
 one sig Table {
@@ -91,10 +91,10 @@ pred suitMonthCombo {
     implies c.suit != Animal and c.suit != DoubleJunk
     
     (c.month = Feb or 
-    c.month = Apr or 
-    c.month = Jun or 
-    c.month = Jul or 
-    c.month = Oct) 
+     c.month = Apr or
+     c.month = Jun or
+     c.month = Jul or
+     c.month = Oct)
     implies c.suit != Bright and c.suit != DoubleJunk
 
     (c.month = May or c.month = Sep) 
@@ -143,30 +143,24 @@ pred no_match[hand, table: set Card] {
   }
 }
 
-pred add[K: Card, pre, post]{
-  post = pre + K
-}
-
-pred discard_to[hand,table, hand_after, table_after : set Card]{
-  some discardee : Card | {
-    hand = hand_after + discardee
-    no (hand_after & discardee)
-    table_after = table + discardee
-    // no (table & discardee) // this shouldn't be necessary to specify
-  }
+pred move[K: Card, from_pre, from_post, to_pre, to_post: set Card]{
+  from_post = from_pre - K
+  to_post = to_pre + K
 }
 
 // I want to write as much of it independent of time as possible
 // because it will make it easier to test and save other
 // headaches
-pred step1[hand, table, hand_after, table_after: set Card, hand_match, table_match: Card]{
+pred step2[hand, table, hand_after, discard, table_after: set Card,
+           hand_match, table_match: Card]{
   some in_hand, in_table: Card | {
     match[hand, table,in_hand,in_table]
     hand_after = hand
     table_after = table
+    no discard
   } or {
     no_match[hand,table]
-    discard_to[hand,table,hand_after,table_after]
+    move[discard,hand,table,hand_after,table_after]
     no hand_match
     no table_match
   }
@@ -177,15 +171,35 @@ pred step1[hand, table, hand_after, table_after: set Card, hand_match, table_mat
 // the player finds a matching card on the table, the player collects both
 // cards along with the cards matched in step 2. Otherwise, the drawn card
 // is added to the table.
+pred step3_flipping[flipped, table_match: Card,
+                    pre_table, post_table: set Card,
+                    pre_deck, post_deck: CardOrder]{
+  post_deck = pre_deck.next
+  some K: table | {
+    same_month[K,flipped]
+    table_match = K
+    pre_table = post_table
+  } or {
+    no table_match
+    post_table = pre_table + flipped
+  }
+}
 
-
-
-//
 // If the card drawn from the top of the draw pile in step 3 matches the two
 // cards matched in step 2, the three cards remain on the table. This is
 // known as ppeok (뻑; ppeog). The three cards remain until a player collects
 // them using the fourth card of the same month.
-//
+pred is_ppeok[x,y,z: Card]{ same_month[x,y] && same_month[y,z] }
+pred is_pi[flipped,discarded]{ same_month[flipped,discarded] }
+pred is_ttadak[played, flipped: Card, table: set Card] {
+  some disj x,y : table | {
+    same_month[x,played]
+    same_month[y,played]
+    same_month[played,flipped]
+  }
+}
+
+
 // If a player draws a card that matches the card discarded in step 2, the
 // player collects both cards as well as one junk card (pi) from each
 // opponent's stock pile. This is known as chok.
