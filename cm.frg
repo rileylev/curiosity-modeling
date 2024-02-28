@@ -146,7 +146,9 @@ pred no_match[hand, table: set Card] {
 pred discard_to[hand,table, hand_after, table_after : set Card]{
   some discardee : Card | {
     hand = hand_after + discardee
+    no (hand_after & discardee)
     table_after = table + discardee
+    // no (table & discardee) // this shouldn't be necessary to specify
   }
 }
 
