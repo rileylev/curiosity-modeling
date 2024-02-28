@@ -48,7 +48,7 @@ pred initial {
   all p: Player | {
     no hand[Hour]
   }
-  no Table.cards
+  no Table.cards[Hour]
 }
 
 pred pop[pre, post: CardOrdering, card: Card] {
@@ -141,6 +141,10 @@ pred no_match[hand, table: set Card] {
   all in_hand: hand, in_table: table | {
     !same_month[in_hand, in_table]
   }
+}
+
+pred add[K: Card, pre, post]{
+  post = pre + K
 }
 
 pred discard_to[hand,table, hand_after, table_after : set Card]{
