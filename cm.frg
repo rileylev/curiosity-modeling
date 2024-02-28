@@ -17,28 +17,63 @@ sig Player {
   hand: set Card
 }
 
-sig CardOrdering {
-  card: one Card,
-  next: lone CardOrdering
-}
-
 one sig Deck {
-  top: lone CardOrdering
+  deck: set Card
 }
 
 one sig Table {
-  cards: set Card
+  table: set Card
+}
+
+pred allCardsInDeck {
+  
 }
 
 pred initial {
-  some Deck.top
   all c: Card | {
-    reachable[c, Deck.top, next, card]
+    c in Deck.deck
   }
   all p: Player | {
-    no hand
+    no p.hand
   }
-  no Table.cards
+  no Table.table
+}
+
+pred redPoetryMatchingRibbon[p: Player] {
+  #{c: Card | c in p.hand and c.suit = Ribbon and 
+  c.month = Jan or c.month = Feb or c.month = Mar} = 3
+}
+
+pred redMatchingRibbon[p: Player] {
+  #{c: Card | c in p.hand and c.suit = Ribbon and 
+  c.month = Apr or c.month = May or c.month = Jul} = 3
+}
+
+pred blueMatchingRibbon[p: Player] {
+  #{c: Card | c in p.hand and c.suit = Ribbon and 
+  (c.month = Jun or c.month = Sep or c.month = Oct)} = 3
+}
+
+pred godori[p: Player] {
+  #{c: Card | c in p.hand and c.suit = Animal and 
+  (c.month = Feb or c.month = Apr or c.month = Aug)} = 3
+}
+
+pred threeOrMorePoints[p: Player] {
+  #{c: Card | c in p.hand and c.suit = Bright} > 4 or
+  #{c: Card | c in p.hand and c.suit = Bright and c.month != Dec} = 3 or
+  #{c: Card | c in p.hand and c.suit = Ribbon} >= 7 or
+  redPoetryMatchingRibbon
+  redMatchingRibbon
+  blueMatchingRibbon
+  #{c: Card | c in p.hand and c.suit = Ribbon} >= 7 or
+  #{c: Card | c in p.hand and c.suit = Junk} >= 10
+}
+
+pred winning {
+  some p: Player | {
+
+  }
 }
 
 // pred pop[pre, post: Deck, card: Card] {
@@ -116,7 +151,8 @@ sig Score { }
 
 run {
   cardWellformed
-} for exactly 48 Card
+  initial
+} for 48 Card
 
 // Play begins with the dealer and continues counterclockwise.
 // A turn begins with a player attempting to match one of the cards lying face-up on the table with a card of the same month in their hand. If there are two cards of the same month already on the table, the player may select one of them. If the player has no cards matching the cards on the table, the player discards a card to the table.
