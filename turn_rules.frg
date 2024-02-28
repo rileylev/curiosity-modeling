@@ -1,3 +1,5 @@
+#lang forge
+
 open "cm.sigs.frg"
 
 // Play begins with the dealer and continues counterclockwise.
@@ -12,8 +14,8 @@ pred same_month[x,y: Card] { x.month = y.month }
 // TODO: I think there's a way to rewrite these using just relational algebra
 // like a projection and intersect or something
 pred match[hand, table: set Card, in_hand, in_table: Card]{
-  hand[in_hand]
-  table[in_table]
+  in_hand in hand
+  in_table in table
   same_month[in_hand,in_table]
 }
 pred no_match[hand, table: set Card] {
@@ -23,6 +25,7 @@ pred no_match[hand, table: set Card] {
 }
 
 pred move[K: Card, from_pre, from_post, to_pre, to_post: set Card]{
+  K in from_pre
   from_post = from_pre - K
   to_post = to_pre + K
 }
@@ -51,8 +54,8 @@ pred step2[hand, table, hand_after, discard, table_after: set Card,
 // cards along with the cards matched in step 2. Otherwise, the drawn card
 // is added to the table.
 pred draw[drawn: Card, pre_deck: set Card, post_deck: set Card]{
-  some pre_deck[flipped, pre]
-  post_deck = pre_deck - flipped
+  some pre_deck[drawn, pre_deck]
+  post_deck = pre_deck - drawn
 }
 pred step3_flipping[flipped, table_match: Card,
                     pre_table, post_table, pre_deck, post_deck: set Card]{
