@@ -27,29 +27,61 @@ sig Player {
   // but that's equivalent to a relation between Hours and Cards
 }
 
-sig CardOrdering {
-  card: one Card,
-  next: lone CardOrdering
+one sig Deck {
+  deck: set Hour -> Card
 }
 
-one sig Deck {
-  top: one Hour -> CardOrdering
+pred initial {
+  all c: Card | {
+    c in Deck.deck
+  }
+  all p: Player | {
+    no p.hand
+  }
+  no Table.table
+}
+
+pred redPoetryMatchingRibbon[p: Player] {
+  #{c: Card | c in p.hand and c.suit = Ribbon and 
+  c.month = Jan or c.month = Feb or c.month = Mar} = 3
+}
+
+pred redMatchingRibbon[p: Player] {
+  #{c: Card | c in p.hand and c.suit = Ribbon and 
+  c.month = Apr or c.month = May or c.month = Jul} = 3
+}
+
+pred blueMatchingRibbon[p: Player] {
+  #{c: Card | c in p.hand and c.suit = Ribbon and 
+  (c.month = Jun or c.month = Sep or c.month = Oct)} = 3
+}
+
+pred godori[p: Player] {
+  #{c: Card | c in p.hand and c.suit = Animal and 
+  (c.month = Feb or c.month = Apr or c.month = Aug)} = 3
+}
+
+pred threeOrMorePoints[p: Player] {
+  #{c: Card | c in p.hand and c.suit = Bright} > 4 or
+  #{c: Card | c in p.hand and c.suit = Bright and c.month != Dec} = 3 or
+  #{c: Card | c in p.hand and c.suit = Ribbon} >= 7 or
+  redPoetryMatchingRibbon
+  redMatchingRibbon
+  blueMatchingRibbon
+  #{c: Card | c in p.hand and c.suit = Ribbon} >= 7 or
+  #{c: Card | c in p.hand and c.suit = Junk} >= 10
+}
+
+pred winning {
+  some p: Player | {
+
+  }
 }
 
 one sig Table {
   cards: set Hour -> Card
 }
 
-pred initial {
-  some Deck.top[Hour]
-  all c: Card, h: Hour | {
-    reachable[c, Deck.top[h], next, card]
-  }
-  all p: Player | {
-    no hand[Hour]
-  }
-  no Table.cards[Hour]
-}
 
 pred pop[pre, post: CardOrdering, card: Card] {
   card = pre.card
@@ -119,7 +151,8 @@ sig Score { }
 
 run {
   cardWellformed
-} for exactly 48 Card
+  initial
+} for 48 Card
 
 // Play begins with the dealer and continues counterclockwise.
 // A turn begins with a player attempting to match one of the cards lying
