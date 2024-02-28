@@ -138,9 +138,29 @@ pred match[hand, table: set Card, in_hand, in_table: Card]{
   same_month[in_hand,in_table]
 }
 pred no_match[hand, table: set Card] {
-  all in_hand, in_table : Card | {
-    (hand[in_hand] and table[in_table])
-      => !same_month[in_hand, in_table]
+  all in_hand: hand, in_table: table | {
+    !same_month[in_hand, in_table]
+  }
+}
+
+pred discard_to[hand,table, hand_after, table_after : set Card]{
+  some discardee : Card | {
+    hand = hand_after + discardee
+    table_after = table + discardee
+  }
+}
+
+// I want to write as much of it independent of time as possible
+// because it will make it easier to test and save other
+// headaches
+pred step1[hand, table, hand_after, table_after: set Card, hand_match, table_match: Card]{
+  some in_hand, in_table: Card | {
+    match[hand, table,in_hand,in_table]
+    hand_after = hand
+    table_after = table
+  } or {
+    no_match[hand,table]
+    discard_to[hand,table,hand_after,table_after]
   }
 }
 
@@ -149,6 +169,9 @@ pred no_match[hand, table: set Card] {
 // the player finds a matching card on the table, the player collects both
 // cards along with the cards matched in step 2. Otherwise, the drawn card
 // is added to the table.
+
+
+
 //
 // If the card drawn from the top of the draw pile in step 3 matches the two
 // cards matched in step 2, the three cards remain on the table. This is
