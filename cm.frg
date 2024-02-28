@@ -33,17 +33,17 @@ sig CardOrdering {
 }
 
 one sig Deck {
-  top: lone CardOrdering
+  top: set Hour -> CardOrdering
 }
 
 one sig Table {
-  cards: set Card
+  cards: set Hour -> Card
 }
 
 pred initial {
-  some Deck.top
-  all c: Card | {
-    reachable[c, Deck.top, next, card]
+  some Deck.top[Hour]
+  all c: Card, h: Hour | {
+    reachable[c, Deck.top[h], next, card]
   }
   all p: Player | {
     no hand[Hour]
@@ -51,9 +51,9 @@ pred initial {
   no Table.cards
 }
 
-pred pop[pre, post: Deck, card: Card] {
-  card = pre.top.card
-  post.top = pre.top.next
+pred pop[pre, post: CardOrdering, card: Card] {
+  card = pre.card
+  post=  pre.next
 }
 
 pred twoJunkUnlessDec {
