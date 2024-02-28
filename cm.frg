@@ -208,6 +208,7 @@ pred is_ttadak[played, flipped: Card, table: set Card] {
 // already on the table, and then draws the fourth matching card from the
 // draw pile in step 3, the player collects all four cards as well as one junk
 // card (pi) from each opponent's stock pile. This is known as ttadak.[7]
+// TODO: what's a stock pile???
 //
 // The object of the game is to create scoring combinations to accumulate
 // points up to a score of either three (for three players) or seven
