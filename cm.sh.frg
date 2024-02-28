@@ -17,10 +17,6 @@ pred initial[t: Turn] {
     t.playing = 1
 }
 
-pred good[t: Turn] {
-    #{i: Int | some t.players[i]} <= 3
-}
-
 pred turnWellformed {
     all t: Turn | {
         #{i: Int | some t.players[i]} <= 3
@@ -63,4 +59,4 @@ pred traces {
 
 run {
     traces
-} for 7 , exactly 3 Turn for { next is linear }
+} for exactly 48 Card, exactly 3 Turn for { next is linear }
