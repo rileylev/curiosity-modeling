@@ -45,6 +45,9 @@ sig CardSetWrapper {
   cardset: set Card
 }
 
+// these tests are weaker because proving the negation unsat
+// is a little annoying since there's multiple valid choices
+// for matches or discards
 test suite for step2 {
   test expect {
     can_discard_if_you_dont_have_a_match: {
@@ -66,5 +69,16 @@ test suite for step2 {
       }
     }
     is sat
+  }
+}
+
+test suite for draw{
+  test expect {
+    drawing_removes_a_card_from_the_deck: {
+      some pre_deck, post_deck: CardSetWrapper, card: Card | {
+        draw[card, pre_deck, post_deck]
+        !(card in post_deck)
+      }
+    } is unsat
   }
 }
