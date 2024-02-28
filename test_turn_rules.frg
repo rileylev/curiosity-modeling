@@ -40,3 +40,20 @@ test suite for move {
     is unsat
   }
 }
+
+sig CardSetWrapper {
+  cardset: set Card
+}
+
+test suite for step2 {
+  test expect {
+    discard_if_you_dont_have_a_match: {
+      some hand, table: CardSetWrapper, discard: Card | {
+        no_match[hand.cardset, table.cardset]
+        not step2[hand.cardset, hand.cardset-discard, table.cardset,
+               table.cardset+discard, none, none, discard]
+      }
+    }
+    is sat
+  }
+}

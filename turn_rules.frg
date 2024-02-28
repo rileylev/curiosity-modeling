@@ -25,6 +25,8 @@ pred no_match[hand, table: set Card] {
 }
 
 pred move[K: Card, from_pre, from_post, to_pre, to_post: set Card]{
+  // TODO: I don't know if we should enforce K in from_pre or not in to_pre
+  // since cards are unique?
   K in from_pre
   from_post = from_pre - K
   to_post = to_pre + K
@@ -33,8 +35,8 @@ pred move[K: Card, from_pre, from_post, to_pre, to_post: set Card]{
 // I want to write as much of it independent of time as possible
 // because it will make it easier to test and save other
 // headaches
-pred step2[hand, table, hand_after, discard, table_after: set Card,
-           hand_match, table_match: Card]{
+pred step2[hand, hand_after, table, table_after: set Card,
+           hand_match, table_match, discard: Card]{
   some in_hand, in_table: Card | {
     match[hand, table,in_hand,in_table]
     hand_after = hand
@@ -42,7 +44,7 @@ pred step2[hand, table, hand_after, discard, table_after: set Card,
     no discard
   } or {
     no_match[hand,table]
-    move[discard,hand,table,hand_after,table_after]
+    move[discard,hand,hand_after,table,table_after]
     no hand_match
     no table_match
   }
