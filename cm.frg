@@ -161,6 +161,8 @@ pred step1[hand, table, hand_after, table_after: set Card, hand_match, table_mat
   } or {
     no_match[hand,table]
     discard_to[hand,table,hand_after,table_after]
+    no hand_match
+    no table_match
   }
 }
 
