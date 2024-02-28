@@ -41,9 +41,6 @@ test suite for move {
   }
 }
 
-sig CardSetWrapper {
-  cardset: set Card
-}
 
 // these tests are weaker because proving the negation unsat
 // is a little annoying since there's multiple valid choices
@@ -78,6 +75,31 @@ test suite for draw{
       some pre_deck, post_deck: CardSetWrapper, card: Card | {
         draw[card, pre_deck, post_deck]
         !(card in post_deck)
+      }
+    } is unsat
+  }
+}
+
+sig MaybeCard {
+  maybecard: lone Card
+}
+
+test suite for step3_flipping{
+  test expect{
+    a_card_must_be_removed_from_the_deck:{
+      some F: Card, T:MaybeCard, PreT, PostT, PreD, PostD: CardSetWrapper | {
+        step3_flipping[F,T.maybecard, PreT.cardset, PostT.cardset,
+                       PreD.cardset, PostD.cardset]
+        F in PostD.cardset
+      }
+    } is unsat
+  }
+  test expect {
+    a_card_must_be_added_to_the_table_if_you_dont_flip_a_match:{
+      some F: Card, PreT, PostT, PreD, PostD: CardSetWrapper | {
+        step3_flipping[F,none, PreT.cardset, PostT.cardset,
+                       PreD.cardset, PostD.cardset]
+        !(F in PostT.cardset)
       }
     } is unsat
   }

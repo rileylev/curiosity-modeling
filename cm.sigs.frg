@@ -16,11 +16,16 @@ sig Card {
 sig Turn {
     players: set Int -> Card,
     table: set Card,
-    deck: set Card, -- the player who WILL go
+    deck: set Card,
+    -- the player who WILL go
     playing: one Int
 }
 
 one sig Game {
     firstTurn: one Turn,
     next: pfunc Turn -> Turn
+}
+
+sig CardSetWrapper {
+  cardset: set Card
 }
