@@ -182,4 +182,19 @@ test suite for pi {
       }
     } is unsat
   }
+  test expect {
+    match_then_take_cards: {
+      some flipped, discarded: Card,
+           pre_hand,post_hand,pre_table,post_table: CardSetWrapper,
+           pre_piles,post_piles: CardSetArray{
+        same_month[flipped,discarded]
+        not (discarded in pre_hand.cardset)
+        // TODO: there's issues caused by not enforcing disjointness
+        pi[flipped,discarded,
+           pre_hand.cardset,post_hand.cardset, pre_table.cardset,post_table.cardset,
+           pre_piles.cardsetarray, post_piles.cardsetarray]
+        post_hand = pre_hand
+      }
+    } is unsat
+  }
 }
