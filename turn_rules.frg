@@ -131,7 +131,6 @@ pred pi[flipped, discarded: Card,
     no_steal[pre_piles, post_piles]
     post_hand  = pre_hand
     post_table = pre_table
-    post_piles = pre_piles
   }
 }
 
