@@ -191,15 +191,9 @@ pred ttadak[played, flipped: Card,
 /* } */
 
 pred one_player_go_helper[
-    pre_hand: set Card,
-    pre_my_pile: set Card,
-    pre_table: set Card,
-    pre_deck: set Card,
+    pre_hand, pre_my_pile, pre_table, pre_deck: set Card,
     pre_other_piles: set Int -> Card,
-    post_hand: set Card,
-    post_my_pile: set Card,
-    post_table: set Card,
-    post_deck: set Card,
+    post_hand, post_my_pile, post_table, post_deck: set Card,
     post_other_piles: set Int -> Card]{
   some hand2, table2 : CardSetWrapper,
        hand_match2, table_match2, discard: MaybeCard,
@@ -265,7 +259,7 @@ pred one_player_go[player: Int,
                             pre_player_pile.cardset, pre_other_piles.cardsetarray]
     one_player_go_helper[pre_hands[player], pre_player_pile.cardset, pre_table,
                          pre_deck, pre_other_piles.cardsetarray,
-                         post_hands[player], post_player_pile.cardsetwrapper, post_table,
+                         post_hands[player], post_player_pile.cardset, post_table,
                          post_deck, post_other_piles.cardsetarray]
     all_others_same[player, pre_hands, post_hands]
     all_others_same[player, pre_stockpiles, post_stockpiles]
