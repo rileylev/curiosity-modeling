@@ -190,16 +190,17 @@ pred ttadak[played, flipped: Card,
 
 /* } */
 
-pred turn_rules_turn[pre_hand: set Card,
-                     pre_my_pile: set Card,
-                     pre_table: set Card,
-                     pre_deck: set Card,
-                     pre_other_piles: set Int -> Card,
-                     post_hand: set Card,
-                     post_my_pile: set Card,
-                     post_table: set Card,
-                     post_deck: set Card,
-                     post_other_piles: set Int -> Card]{
+pred one_player_go_helper[
+    pre_hand: set Card,
+    pre_my_pile: set Card,
+    pre_table: set Card,
+    pre_deck: set Card,
+    pre_other_piles: set Int -> Card,
+    post_hand: set Card,
+    post_my_pile: set Card,
+    post_table: set Card,
+    post_deck: set Card,
+    post_other_piles: set Int -> Card]{
   some hand2, table2 : CardSetWrapper,
        hand_match2, table_match2, discard: MaybeCard,
        flipped : Card,
@@ -229,5 +230,46 @@ pred turn_rules_turn[pre_hand: set Card,
     post_table = table_ttadak.cardset
     post_deck = deck3.cardset
     post_other_piles = other_piles_ttadak.cardsetarray
+  }
+}
+
+pred split_player_stockpiles[player: Int, stockpiles: set Int -> Card,
+                             player_pile : set Card, other_piles : set Int -> Card]{
+  player_pile = stockpiles[player]
+  other_piles = stockpiles - (player -> univ)
+}
+
+pred join_player_stockpiles[player: Int, stockpiles: set Int -> Card,
+                                  player_pile : set Card, other_piles : set Int -> Card]{
+  stockpiles = (player -> player_pile) + other_piles
+}
+
+pred all_others_same[n : Int, X, Y: set Int -> Card]{
+  all k: Int | {
+    k!=n => {
+      X[n]=Y[n]
+    }
+  }
+}
+
+pred one_player_go[player: Int,
+                   pre_hands: set Int -> Card,
+                   pre_stockpiles: set Int -> Card,
+                   pre_table, pre_deck: set Card,
+                   post_hands: set Int -> Card,
+                   post_stockpiles: set Int -> Card,
+                   post_table, post_deck: set Card] {
+  some pre_player_pile, post_player_pile: CardSetWrapper,
+       pre_other_piles, post_other_piles: CardSetArray {
+    split_player_stockpiles[player, pre_stockpiles,
+                            pre_player_pile.cardset, pre_other_piles.cardsetarray]
+    one_player_go_helper[pre_hands[player], pre_player_pile.cardset, pre_table,
+                         pre_deck, pre_other_piles.cardsetarray,
+                         post_hands[player], post_player_pile.cardsetwrapper, post_table,
+                         post_deck, post_other_piles.cardsetarray]
+    all_others_same[player, pre_hands, post_hands]
+    all_others_same[player, pre_stockpiles, post_stockpiles]
+    join_player_stockpiles[player, post_stockpiles,
+                           post_player_pile.cardset, post_other_piles.cardsetarray]
   }
 }
