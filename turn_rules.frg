@@ -11,8 +11,6 @@ open "cm.sigs.frg"
 
 pred same_month[x,y: Card] { x.month = y.month }
 
-// TODO: I think there's a way to rewrite these using just relational algebra
-// like a projection and intersect or something
 pred match[hand, table: set Card, in_hand, in_table: Card]{
   in_hand in hand
   in_table in table
@@ -25,8 +23,6 @@ pred no_match[hand, table: set Card] {
 }
 
 pred move[K: Card, from_pre, from_post, to_pre, to_post: set Card]{
-  // TODO: I don't know if we should enforce K in from_pre or not in to_pre
-  // since cards are unique?
   K in from_pre
   from_post = from_pre - K
   to_post = to_pre + K
@@ -56,47 +52,109 @@ pred step2[hand, hand_after, table, table_after: set Card,
 // cards along with the cards matched in step 2. Otherwise, the drawn card
 // is added to the table.
 pred draw[drawn: Card, pre_deck: set Card, post_deck: set Card]{
-  some pre_deck[drawn, pre_deck]
+  drawn in pre_deck
   post_deck = pre_deck - drawn
 }
 pred step3_flipping[flipped, table_match: Card,
                     pre_table, post_table, pre_deck, post_deck: set Card]{
   draw[flipped, pre_deck, post_deck]
-  some K: table | {
+  some K: pre_table | {
     same_month[K,flipped]
     table_match = K
-    pre_table = post_table
+    post_table = pre_table - table_match
   } or {
     no table_match
     post_table = pre_table + flipped
   }
 }
 
+// TODO: is this an exception?
 // If the card drawn from the top of the draw pile in step 3 matches the two
 // cards matched in step 2, the three cards remain on the table. This is
 // known as ppeok (뻑; ppeog). The three cards remain until a player collects
 // them using the fourth card of the same month.
-pred is_ppeok[x,y,z: Card]{ same_month[x,y] && same_month[y,z] }
-pred is_pi[flipped,discarded: Card]{ same_month[flipped, discarded] }
-pred is_ttadak[played, flipped: Card, table: set Card] {
-  some disj x,y : table | {
-    same_month[x,played]
-    same_month[y,played]
-    same_month[played,flipped]
+pred same_month3[x,y,z: Card]{ same_month[x,y] && same_month[y,z] }
+
+pred ppeok[flipped, matched1, matched2: Card, pre_hand,
+           post_hand, pre_table, post_table: set Card] {
+  {
+    same_month3[flipped,matched1, matched2]
+    post_table = pre_table + flipped + matched1 + matched2
+  } or {
+    post_hand = pre_hand + flipped + matched1 + matched2
+    post_table = pre_table - flipped - matched1 -matched2
   }
 }
-
 
 // If a player draws a card that matches the card discarded in step 2, the
 // player collects both cards as well as one junk card (pi) from each
 // opponent's stock pile. This is known as chok.
-//
+//TODO: junk from stock piles??????
+pred is_junk[card: Card] {
+  card.suit in (Junk + DoubleJunk)
+}
+pred steal1junk[junks: set Card, pre_piles, post_piles: set Int -> Card] {
+  all j: junks | {
+    is_junk[j]
+    (some i: Int | {
+      j = pre_piles[i] - post_piles[i]
+    })
+  }
+  all i: Int | {
+    post_piles[i] in pre_piles[i]
+    (pre_piles[i] - post_piles[i]) in junks
+  }
+}
+
+pred no_steal[pre_piles, post_piles: set Int -> Card] {
+  steal1junk[none, pre_piles, post_piles]
+}
+
+pred pi[flipped, discarded: Card,
+        pre_hand, post_hand, pre_table, post_table: set Card,
+        pre_piles, post_piles: set Int-> Card] {
+  {
+    same_month[flipped, discarded]
+    some wjunks : CardSetWrapper | {
+      steal1junk[wjunks.cardset, pre_piles, post_piles]
+      post_hand = wjunks.cardset + pre_hand + flipped + discarded
+    }
+    post_table = pre_table - flipped - discarded
+  } or {
+    !same_month[flipped, discarded]
+    no_steal[pre_piles, post_piles]
+    post_hand  = pre_hand
+    post_table = pre_table
+    post_piles = pre_piles
+  }
+}
+
 // If a player plays a card in step 2 for which two matching cards are
 // already on the table, and then draws the fourth matching card from the
 // draw pile in step 3, the player collects all four cards as well as one junk
 // card (pi) from each opponent's stock pile. This is known as ttadak.[7]
 // TODO: what's a stock pile???
-//
+pred has_ttadak[x,y,played,flipped: Card]{
+  same_month[x,played]
+  same_month[y,played]
+  same_month[played,flipped]
+}
+pred ttadak[played, flipped: Card,
+            pre_hand, post_hand, pre_table,post_table: set Card,
+            pre_piles, post_piles: set Int -> Card] {
+  some disj x,y : pre_table, wjunks: CardSetWrapper | {
+    has_ttadak[x,y,played, flipped]
+    steal1junk[wjunks.cardset, pre_piles, post_piles]
+    post_table = pre_table - x -y -played -flipped
+    post_hand = pre_hand + wjunks.cardset + x + y + played + flipped
+  } or {
+    no disj x,y : pre_table | {has_ttadak[x,y,played,flipped]}
+    no_steal[pre_piles, post_piles]
+    pre_hand = post_hand
+    pre_table = post_table
+  }
+}
+
 // The object of the game is to create scoring combinations to accumulate
 // points up to a score of either three (for three players) or seven
 // (for two players), at which point a "Go" or a "Stop" must be called.
