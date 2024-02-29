@@ -1,6 +1,6 @@
 #lang forge
 
-open "cm.sigs.frg"
+open "sigs.frg"
 
 // Play begins with the dealer and continues counterclockwise.
 // A turn begins with a player attempting to match one of the cards lying
@@ -91,7 +91,7 @@ pred ppeok[flipped, matched1, matched2: Card, pre_hand,
 // opponent's stock pile. This is known as chok.
 //TODO: junk from stock piles??????
 pred is_junk[card: Card] {
-  card.suit in (Junk + DoubleJunk)
+  card.suit in (Junk1 +Junk2 + DoubleJunk)
 }
 pred has_a_junk[pile: set Card] {
   some j: pile | {

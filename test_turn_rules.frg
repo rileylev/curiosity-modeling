@@ -1,6 +1,6 @@
 #lang forge
 
-open "cm.sigs.frg"
+open "sigs.frg"
 open "turn_rules.frg"
 
 test suite for match {
@@ -109,7 +109,7 @@ test suite for is_junk {
   test expect {
     junk_is_junk: {
       some c: Card {
-        c.suit = Junk
+        c.suit = Junk1 or c.suit = Junk2
         !is_junk[c]
       }
     } is unsat
@@ -126,7 +126,8 @@ test suite for is_junk {
     nothing_else_is_junk: {
       some c: Card {
         c.suit != DoubleJunk
-        c.suit != Junk
+        c.suit != Junk1
+        c.suit != Junk2
         is_junk[c]
       }
     } is unsat
