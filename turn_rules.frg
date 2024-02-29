@@ -96,9 +96,9 @@ pred is_junk[card: Card] {
 pred steal1junk[junks: set Card, pre_piles, post_piles: set Int -> Card] {
   all j: junks | {
     is_junk[j]
-    (some i: Int | {
+    some i: Int | {
       j = pre_piles[i] - post_piles[i]
-    })
+    }
   }
   all i: Int | {
     post_piles[i] in pre_piles[i]
