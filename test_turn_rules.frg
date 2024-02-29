@@ -143,6 +143,20 @@ test suite for steal1junk{
       some J: CardSetWrapper | {
         // none is the wrong thing to pass in
         steal1junk[J.cardset, Int -> none, Int -> none]
+        some J.cardset
+      }
+    } is unsat
+  }
+}
+pred pointwise_eq[x,y: set Int->Card]{
+  all i: Int | {x[i] = y[i]}
+}
+test suite for no_steal {
+  test expect{
+    piles_stay_the_same: {
+      some x,y : CardSetArray {
+        no_steal[x.cardsetarray,y.cardsetarray]
+        !pointwise_eq[x.cardsetarray,y.cardsetarray]
       }
     } is unsat
   }

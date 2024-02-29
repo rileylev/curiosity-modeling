@@ -101,9 +101,11 @@ pred steal1junk[junks: set Card, pre_piles, post_piles: set Int -> Card] {
     })
   }
   all i: Int | {
+    post_piles[i] in pre_piles[i]
     (pre_piles[i] - post_piles[i]) in junks
   }
 }
+
 pred no_steal[pre_piles, post_piles: set Int -> Card] {
   steal1junk[none, pre_piles, post_piles]
 }
