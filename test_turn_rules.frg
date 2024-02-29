@@ -147,16 +147,21 @@ test suite for steal1junk{
       }
     } is unsat
   }
-}
-pred pointwise_eq[x,y: set Int->Card]{
-  all i: Int | {x[i] = y[i]}
+  test expect{
+    only_steal_junk: {
+      some J :CardSetWrapper,X,Y: CardSetArray | {
+        steal1junk[J.cardset,X.cardsetarray,Y.cardsetarray]
+        some j: J.cardset | {!is_junk[j]}
+      }
+    } is unsat
+  }
 }
 test suite for no_steal {
   test expect{
     piles_stay_the_same: {
       some x,y : CardSetArray {
         no_steal[x.cardsetarray,y.cardsetarray]
-        !pointwise_eq[x.cardsetarray,y.cardsetarray]
+        x.cardsetarray!=y.cardsetarray // relation equality is pointwise equality
       }
     } is unsat
   }
