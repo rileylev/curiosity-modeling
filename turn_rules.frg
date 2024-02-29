@@ -81,6 +81,7 @@ pred ppeok[flipped, matched1, matched2: Card,
     same_month3[flipped,matched1, matched2]
     post_table = pre_table + flipped + matched1 + matched2
   } or {
+    !same_month3[flipped, matched1, matched2]
     post_hand = pre_hand + flipped + matched1 + matched2
     post_table = pre_table - flipped - matched1 -matched2
   }
