@@ -34,3 +34,11 @@ one sig Game {
 sig CardSetWrapper {
   cardset: set Card
 }
+
+sig MaybeCard {
+  maybecard: set Card
+}
+
+sig CardSetArray {
+  cardsetarray: set Int -> Card
+}
