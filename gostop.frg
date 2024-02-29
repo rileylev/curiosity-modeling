@@ -3,6 +3,7 @@
 open "sigs.frg"
 open "cards.frg"
 open "score.frg"
+open "turn_rules.frg"
 
 pred initial[t: Turn] {
     all c: Card | c in t.deck -- all cards in deck
@@ -40,6 +41,14 @@ pred nextTurn[prev, post: Turn] {
     all c: Card | (c in prev.deck and not c in post.deck) implies {
         c in post.table or c in post.players[prev.playing]
     }
+    // TODO: do we enforce hands are disjoint from each other + the table + the deck?
+    one_player_go[prev.playing,
+                  prev.players,
+                  prev.stockpiles,
+                  prev.table, prev.deck,
+                  post.players,
+                  post.stockpiles,
+                  post.table, post.deck]
 
     -- Frame
     staysSameIfNotPrevPlaying[prev, post]
