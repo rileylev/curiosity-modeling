@@ -2,7 +2,7 @@
 
 open "cm.sigs.frg"
 open "cm.cards.frg"
-// open "cm.score.frg"
+open "cm.score.frg"
 
 pred initial[t: Turn] {
     all c: Card | {
@@ -39,7 +39,7 @@ pred nextTurn[prev, post: Turn] {
 
     -- Action
     post.playing = nextPlayer[prev]
-    -- If a card is gone from the deck, it must be in the player who played in the prev turn
+    -- If a card is gone from the deck, it must be with the player who played in the prev turn or on the table
     all c: Card | (c in prev.deck and not c in post.deck) implies {
         c in post.table or c in post.players[prev.playing]
     }
