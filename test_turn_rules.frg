@@ -210,3 +210,19 @@ test suite for same4months {
     }is unsat
   }
 }
+
+test suite for ttadak {
+  test expect {
+    no_match_no_hand_change: {
+      some played, flipped: Card,
+           pre_hand, post_hand, pre_table, post_table : CardSetWrapper,
+           pre_piles, post_piles: CardSetArray {
+        !same_month[played,flipped]
+        ttadak[played, flipped,
+               pre_hand.cardset, post_hand.cardset, pre_table.cardset, post_table.cardset,
+               pre_piles.cardsetarray, post_piles.cardsetarray]
+        pre_hand.cardset != post_hand.cardset
+      }
+    } is unsat
+  }
+}
