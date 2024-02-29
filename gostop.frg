@@ -5,18 +5,15 @@ open "cards.frg"
 open "score.frg"
 
 pred initial[t: Turn] {
-    all c: Card | {
-        c in t.deck
-    }
-    all i: Int | {
-        no t.players[i]
-    }
+    all c: Card | c in t.deck -- all cards in deck
+    all i: Int | no t.players[i] -- no players have any cards
     no t.table
-    some t.deck
+    some t.deck -- deck should exist
 
-    t.playing = 1
+    t.playing = 1 -- player 1 goes first
 }
 
+-- There should not be more than three players (at least in this version) during a turn
 pred turnWellformed {
     all t: Turn | {
         #{i: Int | some t.players[i]} <= 3

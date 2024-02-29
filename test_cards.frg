@@ -3,7 +3,6 @@
 open "gostop.frg"
 open "sigs.frg"
 open "cards.frg"
-open "score.frg"
 
 fun countSuit[s: Suit]: Int {
     #{c: Card | c.suit = s}
@@ -23,8 +22,9 @@ test suite for cardWellformed {
     -- We enforce an exactly 48 card constraint afterwards for optimization, but
     -- we want to make sure that even without this constraint, we would still have
     -- 48 cards
-    test expect { cardWellformedNonTrivial: cardWellformed is sat }
+    test expect { cardWellformedNonTrivial: cardWellformed for exactly 48 Card is sat } 
     assert cardWellformed is sufficient for fourtyEightCards for 7 Int
+    -- The following tests take a really long time, so use them at your own risk...
     assert cardWellformed is sufficient for fiveBright for exactly 48 Card, 7 Int
     assert cardWellformed is sufficient for sevenAnimal for exactly 48 Card, 7 Int
     assert cardWellformed is sufficient for nineRibbon for exactly 48 Card, 7 Int
@@ -32,6 +32,4 @@ test suite for cardWellformed {
     assert cardWellformed is sufficient for fourDoubleJunk for exactly 48 Card, 7 Int
 }
 
-test suite for winning {
-    // assert all t: Turn | winning[t] is necessary for winning[Game.next[t]] for exactly 48 Card, 7 Int
-}
+
