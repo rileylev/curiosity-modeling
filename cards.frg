@@ -1,6 +1,6 @@
 #lang forge
 
-open "cm.sigs.frg"
+open "sigs.frg"
 
 pred twoJunkForMonth[m: Month] {
   one card: Card | card.month = m implies {

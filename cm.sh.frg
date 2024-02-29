@@ -1,8 +1,8 @@
 #lang forge
 
-open "cm.sigs.frg"
-open "cm.cards.frg"
-open "cm.score.frg"
+open "sigs.frg"
+open "cards.frg"
+open "score.frg"
 
 pred initial[t: Turn] {
     all c: Card | {
