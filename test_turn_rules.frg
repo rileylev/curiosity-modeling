@@ -189,7 +189,7 @@ test suite for ppeok {
           !same_month3[flipped,matched1,matched2]
           ppeok[flipped, matched1, matched2,
                 pre_collect.cardset, post_collect.cardset, pre_table.cardset, post_table.cardset]
-          pre_hand.cardset != post_hand.cardset
+          pre_collect.cardset != post_collect.cardset
         }
       }
     } is unsat
