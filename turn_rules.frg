@@ -139,7 +139,7 @@ pred pi[flipped, discarded: Card,
 // draw pile in step 3, the player collects all four cards as well as one junk
 // card (pi) from each opponent's stock pile. This is known as ttadak.[7]
 // TODO: what's a stock pile???
-pred has_ttadak[x,y,played,flipped: Card]{
+pred same4months[x,y,played,flipped: Card]{
   same_month[x,played]
   same_month[y,played]
   same_month[played,flipped]
@@ -148,12 +148,12 @@ pred ttadak[played, flipped: Card,
             pre_hand, post_hand, pre_table,post_table: set Card,
             pre_piles, post_piles: set Int -> Card] {
   some disj x,y : pre_table, wjunks: CardSetWrapper | {
-    has_ttadak[x,y,played, flipped]
+    same4months[x,y,played, flipped]
     steal1junk[wjunks.cardset, pre_piles, post_piles]
     post_table = pre_table - x -y -played -flipped
     post_hand = pre_hand + wjunks.cardset + x + y + played + flipped
   } or {
-    no disj x,y : pre_table | {has_ttadak[x,y,played,flipped]}
+    no disj x,y : pre_table | {same4months[x,y,played,flipped]}
     no_steal[pre_piles, post_piles]
     pre_hand = post_hand
     pre_table = post_table

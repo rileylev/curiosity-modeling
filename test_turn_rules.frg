@@ -189,6 +189,7 @@ test suite for pi {
            pre_piles,post_piles: CardSetArray{
         same_month[flipped,discarded]
         not (discarded in pre_hand.cardset)
+        // corner case if the "same" card is in the hand and table :C
         // TODO: there's issues caused by not enforcing disjointness
         pi[flipped,discarded,
            pre_hand.cardset,post_hand.cardset, pre_table.cardset,post_table.cardset,
@@ -196,5 +197,16 @@ test suite for pi {
         post_hand = pre_hand
       }
     } is unsat
+  }
+}
+
+test suite for same4months {
+  test expect {
+    fails_if_different_month: {
+      some x,y,a,b: Card | {
+        !same_month[x,y]
+        same4months[x,y,a,b]
+      }
+    }is unsat
   }
 }
