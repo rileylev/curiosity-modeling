@@ -1,16 +1,32 @@
 #lang forge
 
-open "cm.sigs.frg"
+open "sigs.frg"
 
-pred twoJunkForMonth[m: Month] {
-  one card: Card | card.month = m implies {
-    card.suit = Junk1
-  }
-  one card: Card | card.month = m implies {
-    card.suit = Junk2
+pred allSuitMonthComboUnique {
+  all disj a, b: Card | {
+    a.month != b.month or a.suit != b.suit
   }
 }
 
+pred twoJunkForMonth[m: Month] {
+  one card: Card | {
+    card.month = m and card.suit = Junk1
+  }
+  one card: Card |  {
+    card.month = m and card.suit = Junk2
+  }
+}
+
+pred oneJunkForDec {
+  one card: Card | {
+    card.month = Dec and card.suit = Junk1
+  }
+  no card: Card | {
+    card.month = Dec and card.suit = Junk2
+  }
+}
+
+-- all months except december have two Junks
 pred twoJunkUnlessDec {
   twoJunkForMonth[Jan]
   twoJunkForMonth[Feb]
@@ -22,29 +38,11 @@ pred twoJunkUnlessDec {
   twoJunkForMonth[Sep]
   twoJunkForMonth[Oct]
   twoJunkForMonth[Nov]
+  oneJunkForDec
 }
 
-// pred oneEachForNonJunk[m: Month] {
-//   #{card: Card | card.month = m and card.suit = Bright} < 2
-//   #{card: Card | card.month = m and card.suit = Animal} < 2
-//   #{card: Card | card.month = m and card.suit = Ribbon} < 2
-//   #{card: Card | card.month = m and card.suit = DoubleJunk} < 2
-// }
-
-// pred oneEachForNonJunkAll {
-//   oneEachForNonJunk[Jan]
-//   oneEachForNonJunk[Feb]
-//   oneEachForNonJunk[Mar]
-//   oneEachForNonJunk[Apr]
-//   oneEachForNonJunk[May]
-//   oneEachForNonJunk[Jun]
-//   oneEachForNonJunk[Jul]
-//   oneEachForNonJunk[Sep]
-//   oneEachForNonJunk[Oct]
-//   oneEachForNonJunk[Nov]
-// }
-
-pred fourOfEachSuite {
+-- all months have four cards
+pred fourOfEachMonth {
   #{card: Card | card.month = Jan} = 4
   #{card: Card | card.month = Feb} = 4
   #{card: Card | card.month = Mar} = 4
@@ -59,7 +57,8 @@ pred fourOfEachSuite {
   #{card: Card | card.month = Dec} = 4
 }
 
-pred suitMonthCombo {
+-- Outlines which months don't have which suites
+pred monthNotHaveSuit {
   all c: Card | {
     (c.month = Jan or c.month = Mar) 
     implies c.suit != Animal and c.suit != DoubleJunk
@@ -83,7 +82,8 @@ pred suitMonthCombo {
 }
 
 pred cardWellformed {
-  fourOfEachSuite
+  allSuitMonthComboUnique
+  fourOfEachMonth
   twoJunkUnlessDec
-  suitMonthCombo
+  monthNotHaveSuit
 }

@@ -1,8 +1,6 @@
 #lang forge
 
-open "cm.sigs.frg"
-
-
+open "sigs.frg"
 
 fun countSuitInHand[hand: set Card, s: Suit]: Int {
     #{c: Card | c in hand and c.suit = s}

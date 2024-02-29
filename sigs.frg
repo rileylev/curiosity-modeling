@@ -12,8 +12,10 @@ sig Card {
   month: one Month
 }
 
--- Represents the START of a turn
+-- Represents the state of the game at the START of a turn
 sig Turn {
+    -- player ID to card mapping
+    -- We _could_ hard-code this, but we wanted to leave a bit of wiggle room for future expansion
     players: set Int -> Card,
     table: set Card,
     deck: set Card,
@@ -21,6 +23,8 @@ sig Turn {
     playing: one Int
 }
 
+-- Represents an entire (or at least up to permitted turns) game loop of go-stop
+-- By entire game loop, we mean up to the point where someone reaches the score threshold
 one sig Game {
     firstTurn: one Turn,
     next: pfunc Turn -> Turn
