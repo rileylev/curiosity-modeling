@@ -167,3 +167,19 @@ test suite for no_steal {
     } is unsat
   }
 }
+
+test suite for pi {
+  test expect{
+    no_match_then_no_hand_change: {
+      some flipped, discarded: Card,
+           pre_hand,post_hand,pre_table,post_table: CardSetWrapper,
+           pre_piles,post_piles: CardSetArray{
+        !same_month[flipped,discarded]
+        pi[flipped,discarded,
+           pre_hand.cardset,post_hand.cardset, pre_table.cardset,post_table.cardset,
+           pre_piles.cardsetarray, post_piles.cardsetarray]
+        pre_hand.cardset!=post_hand.cardset
+      }
+    } is unsat
+  }
+}
