@@ -93,6 +93,11 @@ pred ppeok[flipped, matched1, matched2: Card, pre_hand,
 pred is_junk[card: Card] {
   card.suit in (Junk + DoubleJunk)
 }
+pred has_a_junk[pile: set Card] {
+  some j: pile | {
+    is_junk[j]
+  }
+}
 pred steal1junk[junks: set Card, pre_piles, post_piles: set Int -> Card] {
   all j: junks | {
     is_junk[j]
@@ -101,11 +106,12 @@ pred steal1junk[junks: set Card, pre_piles, post_piles: set Int -> Card] {
     }
   }
   all i: Int | {
+    // Is stealing mandatory?
+    has_a_junk[pre_piles[i]] => (post_piles[i] != pre_piles[i])
     post_piles[i] in pre_piles[i]
     (pre_piles[i] - post_piles[i]) in junks
   }
 }
-
 pred no_steal[pre_piles, post_piles: set Int -> Card] {
   steal1junk[none, pre_piles, post_piles]
 }

@@ -147,6 +147,14 @@ test suite for steal1junk{
       }
     } is unsat
   }
+  test expect{
+    only_steal_junk: {
+      some J :CardSetWrapper,X,Y: CardSetArray | {
+        steal1junk[J.cardset,X.cardsetarray,Y.cardsetarray]
+        some j: J.cardset | {!is_junk[j]}
+      }
+    } is unsat
+  }
 }
 test suite for no_steal {
   test expect{
