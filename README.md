@@ -9,6 +9,11 @@ We manually made individual sigs for Months rather than using integers, since we
 
 We use a trace-based model. Therefore, we start with an `initial` predicate which ensures that all cards are in the deck and NOT in the hands of players or on the table. Then, we use the `nextTurn` predicate to define the transition between turns.
 
+Because we are modeling something stateful and were uncertain how we would model the state, a lot of the 
+core rules were modeled in a "purely functional" time-agnostic way. This makes calling the predicates more
+complicated but it kept them insulated from uncertainty in the design while making it easier to test them
+as small units.
+
 We also considered several different strategies of modeling the game. To list a few that we considered but ultimately didn't use,
 - all state-related Sigs (e.g. Deck, Player, Table) have pfunc field from an `Hour` sig to `set Card`.
 
