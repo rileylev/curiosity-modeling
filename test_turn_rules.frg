@@ -61,8 +61,8 @@ test suite for step2 {
     can_keep_if_you_do_have_a_match: {
       some hand, table: CardSetWrapper, in_hand,in_table: Card | {
         match[hand.cardset, table.cardset, in_hand, in_table]
-        step2[hand.cardset, hand.cardset, table.cardset,
-               table.cardset, in_hand, in_table, none]
+        step2[hand.cardset, hand.cardset -in_hand, table.cardset,
+               table.cardset - in_table, in_hand, in_table, none]
       }
     }
     is sat
@@ -80,15 +80,11 @@ test suite for draw{
   }
 }
 
-sig MaybeCard {
-  maybecard: lone Card
-}
-
 test suite for step3_flipping{
   test expect{
     a_card_must_be_removed_from_the_deck:{
-      some F: Card, T:MaybeCard, PreT, PostT, PreD, PostD: CardSetWrapper | {
-        step3_flipping[F,T.maybecard, PreT.cardset, PostT.cardset,
+      some F: Card, Fmatch, T:MaybeCard, PreT, PostT, PreD, PostD: CardSetWrapper | {
+        step3_flipping[F,Fmatch.maybecard,T.maybecard, PreT.cardset, PostT.cardset,
                        PreD.cardset, PostD.cardset]
         F in PostD.cardset
       }
@@ -97,7 +93,7 @@ test suite for step3_flipping{
   test expect {
     a_card_must_be_added_to_the_table_if_you_dont_flip_a_match:{
       some F: Card, PreT, PostT, PreD, PostD: CardSetWrapper | {
-        step3_flipping[F,none, PreT.cardset, PostT.cardset,
+        step3_flipping[F,none,none, PreT.cardset, PostT.cardset,
                        PreD.cardset, PostD.cardset]
         !(F in PostT.cardset)
       }
@@ -134,9 +130,6 @@ test suite for is_junk {
   }
 }
 
-sig CardSetArray {
-  cardsetarray: set Int -> Card
-}
 
 test suite for steal1junk{
   test expect{

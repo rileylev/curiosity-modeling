@@ -35,8 +35,8 @@ pred step2[hand, hand_after, table, table_after: set Card,
            hand_match, table_match, discard: Card]{
   some in_hand, in_table: Card | {
     match[hand, table,in_hand,in_table]
-    hand_after = hand
-    table_after = table
+    hand_after = hand - hand_match
+    table_after = table -table_match
     no discard
   } or {
     no_match[hand,table]
@@ -55,15 +55,17 @@ pred draw[drawn: Card, pre_deck: set Card, post_deck: set Card]{
   drawn in pre_deck
   post_deck = pre_deck - drawn
 }
-pred step3_flipping[flipped, table_match: Card,
+pred step3_flipping[flipped, flipped_match, table_match: Card,
                     pre_table, post_table, pre_deck, post_deck: set Card]{
   draw[flipped, pre_deck, post_deck]
   some K: pre_table | {
     same_month[K,flipped]
     table_match = K
     post_table = pre_table - table_match
+    flipped_match = flipped
   } or {
     no table_match
+    no flipped_match
     post_table = pre_table + flipped
   }
 }
@@ -174,3 +176,58 @@ pred ttadak[played, flipped: Card,
 // game (나가리; nagali). The dealer and play order of the next game remain
 // the same as with the Nagari game, and when the game ends, the loser owes
 // the winner double money.
+
+
+/* pred turn_rules_turn[player: Int, */
+/*                      pre_hands:  set Int -> Card, */
+/*                      pre_pile: set Int -> Card, */
+/*                      pre_table : set Card, */
+/*                      pre_deck : set Card, */
+/*                      post_hands: set Int -> Card, */
+/*                      post_pile: set Int -> Card, */
+/*                      post_table: set Card, */
+/*                      post_deck: set Card]{ */
+
+/* } */
+
+pred turn_rules_turn[pre_hand: set Card,
+                     pre_my_pile: set Card,
+                     pre_table: set Card,
+                     pre_deck: set Card,
+                     pre_other_piles: set Int -> Card,
+                     post_hand: set Card,
+                     post_my_pile: set Card,
+                     post_table: set Card,
+                     post_deck: set Card,
+                     post_other_piles: set Int -> Card]{
+  some hand2, table2 : CardSetWrapper,
+       hand_match2, table_match2, discard: MaybeCard,
+       flipped : Card,
+       table_match3, flip_match3 : MaybeCard,
+       table3, deck3, pile3 : CardSetWrapper,
+       my_pile_ppeok, table_ppeok : CardSetWrapper,
+       collect_pi, table_pi : CardSetWrapper,
+       other_piles_pi: CardSetArray,
+       collect_ttadak, table_ttadak: CardSetWrapper,
+       other_piles_ttadak: CardSetArray {
+    step2[pre_hand, hand2.cardset, pre_table, table2.cardset,
+          hand_match2.maybecard, table_match2.maybecard, discard.maybecard]
+    step3_flipping[flipped, flip_match3.maybecard, table_match3.maybecard,
+                   table2.cardset, table3.cardset, pre_deck, deck3]
+    pile3.cardset = pre_my_pile
+      + hand_match2.maybecard + table_match2.maybecard + table_match3.maybecard + flip_match3.maybecard
+    ppeok[flipped, hand_match2.maybecard, table_match2.maybecard,
+          pile3.cardset, my_pile_ppeok.cardset, table3.cardset, table_ppeok.cardset]
+    pi[flipped, discard.maybecard,
+       collect_pi.cardset, table_ppeok.cardset, table_pi.cardset,
+       pre_other_piles, other_piles_pi.cardsetarray]
+    ttadak[hand_match2.maybecard, flipped,
+           collect_ttadak.cardset, table_pi.cardset, table_ttadak.cardset,
+           other_piles_pi.cardsetarray, other_piles_ttadak.cardsetarray]
+    post_hand = hand2.cardset
+    post_my_pile = pile3.cardset + collect_pi.cardset + collect_ttadak.cardset
+    post_table = table_ttadak.cardset
+    post_deck = deck3.cardset
+    post_other_piles = other_piles_ttadak.cardsetarray
+  }
+}
