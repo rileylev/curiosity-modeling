@@ -3,11 +3,11 @@
 open "sigs.frg"
 
 pred twoJunkForMonth[m: Month] {
-  one card: Card | card.month = m implies {
-    card.suit = Junk1
+  one card: Card | {
+    card.month = m and card.suit = Junk1
   }
-  one card: Card | card.month = m implies {
-    card.suit = Junk2
+  one card: Card |  {
+    card.month = m and card.suit = Junk2
   }
 }
 
@@ -23,26 +23,6 @@ pred twoJunkUnlessDec {
   twoJunkForMonth[Oct]
   twoJunkForMonth[Nov]
 }
-
-// pred oneEachForNonJunk[m: Month] {
-//   #{card: Card | card.month = m and card.suit = Bright} < 2
-//   #{card: Card | card.month = m and card.suit = Animal} < 2
-//   #{card: Card | card.month = m and card.suit = Ribbon} < 2
-//   #{card: Card | card.month = m and card.suit = DoubleJunk} < 2
-// }
-
-// pred oneEachForNonJunkAll {
-//   oneEachForNonJunk[Jan]
-//   oneEachForNonJunk[Feb]
-//   oneEachForNonJunk[Mar]
-//   oneEachForNonJunk[Apr]
-//   oneEachForNonJunk[May]
-//   oneEachForNonJunk[Jun]
-//   oneEachForNonJunk[Jul]
-//   oneEachForNonJunk[Sep]
-//   oneEachForNonJunk[Oct]
-//   oneEachForNonJunk[Nov]
-// }
 
 pred fourOfEachSuite {
   #{card: Card | card.month = Jan} = 4

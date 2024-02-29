@@ -51,7 +51,7 @@ pred nextTurn[prev, post: Turn] {
 pred traces {
     cardWellformed
     turnWellformed
-    initial[Game.firstTurn]
+    // initial[Game.firstTurn]
     no prev: Turn | Game.next[prev] = Game.firstTurn
 
     all t: Turn | some Game.next[t] implies nextTurn[t, Game.next[t]]

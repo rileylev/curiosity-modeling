@@ -1,9 +1,9 @@
 #lang forge
 
-open "cm.sh.frg"
-open "cm.sigs.frg"
-open "cm.cards.frg"
-open "cm.score.frg"
+open "gostop.frg"
+open "sigs.frg"
+open "cards.frg"
+open "score.frg"
 
 fun countSuit[s: Suit]: Int {
     #{c: Card | c.suit = s}
@@ -23,6 +23,7 @@ test suite for cardWellformed {
     -- We enforce an exactly 48 card constraint afterwards for optimization, but
     -- we want to make sure that even without this constraint, we would still have
     -- 48 cards
+    test expect { cardWellformedNonTrivial: cardWellformed is sat }
     assert cardWellformed is sufficient for fourtyEightCards for 7 Int
     assert cardWellformed is sufficient for fiveBright for exactly 48 Card, 7 Int
     assert cardWellformed is sufficient for sevenAnimal for exactly 48 Card, 7 Int
