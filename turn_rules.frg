@@ -147,11 +147,13 @@ pred same4months[x,y,played,flipped: Card]{
 pred ttadak[played, flipped: Card,
             pre_hand, post_hand, pre_table,post_table: set Card,
             pre_piles, post_piles: set Int -> Card] {
-  some disj x,y : pre_table, wjunks: CardSetWrapper | {
+  some disj x,y : pre_table | {
     same4months[x,y,played, flipped]
-    steal1junk[wjunks.cardset, pre_piles, post_piles]
+    some wjunks: CardSetWrapper | {
+      steal1junk[wjunks.cardset, pre_piles, post_piles]
+      post_hand = pre_hand + wjunks.cardset + x + y + played + flipped
+    }
     post_table = pre_table - x -y -played -flipped
-    post_hand = pre_hand + wjunks.cardset + x + y + played + flipped
   } or {
     no disj x,y : pre_table | {same4months[x,y,played,flipped]}
     no_steal[pre_piles, post_piles]
