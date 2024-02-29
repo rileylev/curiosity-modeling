@@ -75,15 +75,18 @@ pred step3_flipping[flipped, table_match: Card,
 // them using the fourth card of the same month.
 pred same_month3[x,y,z: Card]{ same_month[x,y] && same_month[y,z] }
 
+// I think this rule is about a situation where you have to give back cards you collected
+// I don't think it can actually affect the player's hand
 pred ppeok[flipped, matched1, matched2: Card,
-           pre_hand, post_hand, pre_table, post_table: set Card] {
+           pre_collect, post_collect, pre_table, post_table: set Card] {
   {
     same_month3[flipped,matched1, matched2]
     post_table = pre_table + flipped + matched1 + matched2
+    post_collect = pre_collect - flipped - matched1 - matched2
   } or {
     !same_month3[flipped, matched1, matched2]
-    post_hand = pre_hand + flipped + matched1 + matched2
-    post_table = pre_table - flipped - matched1 -matched2
+    post_collect= pre_collect
+    post_table = pre_table
   }
 }
 

@@ -172,12 +172,24 @@ test suite for ppeok {
   test expect {
     three_way_match_then_discard: {
       some disj flipped, matched1, matched2: Card |{
-        some pre_hand, post_hand, pre_table, post_table: CardSetWrapper | {
+        some pre_collect, post_collect, pre_table, post_table: CardSetWrapper | {
           same_month3[flipped,matched1,matched2]
           not(flipped in pre_table.cardset)
           ppeok[flipped, matched1, matched2,
-                pre_hand.cardset, post_hand.cardset, pre_table.cardset, post_table.cardset]
+                pre_collect.cardset, post_collect.cardset, pre_table.cardset, post_table.cardset]
           post_table.cardset = pre_table.cardset
+        }
+      }
+    } is unsat
+  }
+  test expect {
+    no_match_then_keep: {
+      some disj flipped, matched1, matched2: Card |{
+        some pre_collect, post_collect, pre_table, post_table: CardSetWrapper | {
+          !same_month3[flipped,matched1,matched2]
+          ppeok[flipped, matched1, matched2,
+                pre_collect.cardset, post_collect.cardset, pre_table.cardset, post_table.cardset]
+          pre_hand.cardset != post_hand.cardset
         }
       }
     } is unsat
