@@ -172,29 +172,28 @@ test suite for pi {
   test expect{
     no_match_then_no_hand_change: {
       some flipped, discarded: Card,
-           pre_hand,post_hand,pre_table,post_table: CardSetWrapper,
+           collected, pre_table,post_table: CardSetWrapper,
            pre_piles,post_piles: CardSetArray{
         !same_month[flipped,discarded]
         pi[flipped,discarded,
-           pre_hand.cardset,post_hand.cardset, pre_table.cardset,post_table.cardset,
+           collected.cardset, pre_table.cardset,post_table.cardset,
            pre_piles.cardsetarray, post_piles.cardsetarray]
-        pre_hand.cardset!=post_hand.cardset
+        some collected.cardset
       }
     } is unsat
   }
   test expect {
     match_then_take_cards: {
       some flipped, discarded: Card,
-           pre_hand,post_hand,pre_table,post_table: CardSetWrapper,
+           collected,pre_table,post_table: CardSetWrapper,
            pre_piles,post_piles: CardSetArray{
         same_month[flipped,discarded]
-        not (discarded in pre_hand.cardset)
-        // corner case if the "same" card is in the hand and table :C
+        not (discarded = flipped) // the cards should be different
         // TODO: there's issues caused by not enforcing disjointness
         pi[flipped,discarded,
-           pre_hand.cardset,post_hand.cardset, pre_table.cardset,post_table.cardset,
+           collected.cardset, pre_table.cardset,post_table.cardset,
            pre_piles.cardsetarray, post_piles.cardsetarray]
-        post_hand = pre_hand
+        no collected.cardset
       }
     } is unsat
   }
@@ -215,13 +214,28 @@ test suite for ttadak {
   test expect {
     no_match_no_hand_change: {
       some played, flipped: Card,
-           pre_hand, post_hand, pre_table, post_table : CardSetWrapper,
+           collected, pre_table, post_table : CardSetWrapper,
            pre_piles, post_piles: CardSetArray {
         !same_month[played,flipped]
         ttadak[played, flipped,
-               pre_hand.cardset, post_hand.cardset, pre_table.cardset, post_table.cardset,
+               collected.cardset, pre_table.cardset, post_table.cardset,
                pre_piles.cardsetarray, post_piles.cardsetarray]
-        pre_hand.cardset != post_hand.cardset
+        some collected.cardset
+      }
+    } is unsat
+  }
+  test expect {
+    yes_match_yes_hand_change: {
+      some played, flipped: Card,
+           collected, pre_table, post_table : CardSetWrapper,
+           pre_piles, post_piles: CardSetArray {
+        // has a match
+        some disj x, y : pre_table.cardset | { same4months[x,y,played, flipped] }
+        !(flipped = played) // new card isn't actually in hand
+        ttadak[played, flipped,
+               collected.cardset, pre_table.cardset, post_table.cardset,
+               pre_piles.cardsetarray, post_piles.cardsetarray]
+        no collected.cardset
       }
     } is unsat
   }

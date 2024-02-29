@@ -75,8 +75,8 @@ pred step3_flipping[flipped, table_match: Card,
 // them using the fourth card of the same month.
 pred same_month3[x,y,z: Card]{ same_month[x,y] && same_month[y,z] }
 
-pred ppeok[flipped, matched1, matched2: Card, pre_hand,
-           post_hand, pre_table, post_table: set Card] {
+pred ppeok[flipped, matched1, matched2: Card,
+           pre_hand, post_hand, pre_table, post_table: set Card] {
   {
     same_month3[flipped,matched1, matched2]
     post_table = pre_table + flipped + matched1 + matched2
@@ -117,20 +117,20 @@ pred no_steal[pre_piles, post_piles: set Int -> Card] {
 }
 
 pred pi[flipped, discarded: Card,
-        pre_hand, post_hand, pre_table, post_table: set Card,
+        collected, pre_table, post_table: set Card,
         pre_piles, post_piles: set Int-> Card] {
   {
     same_month[flipped, discarded]
     some wjunks : CardSetWrapper | {
       steal1junk[wjunks.cardset, pre_piles, post_piles]
-      post_hand = wjunks.cardset + pre_hand + flipped + discarded
+      collected = wjunks.cardset + flipped + discarded
     }
     post_table = pre_table - flipped - discarded
   } or {
     !same_month[flipped, discarded]
     no_steal[pre_piles, post_piles]
-    post_hand  = pre_hand
     post_table = pre_table
+    no collected
   }
 }
 
@@ -145,20 +145,20 @@ pred same4months[x,y,played,flipped: Card]{
   same_month[played,flipped]
 }
 pred ttadak[played, flipped: Card,
-            pre_hand, post_hand, pre_table,post_table: set Card,
+            collected, pre_table,post_table: set Card,
             pre_piles, post_piles: set Int -> Card] {
   some disj x,y : pre_table | {
     same4months[x,y,played, flipped]
     some wjunks: CardSetWrapper | {
       steal1junk[wjunks.cardset, pre_piles, post_piles]
-      post_hand = pre_hand + wjunks.cardset + x + y + played + flipped
+      collected = wjunks.cardset + x + y + played + flipped
     }
     post_table = pre_table - x -y -played -flipped
   } or {
     no disj x,y : pre_table | { same4months[x,y,played,flipped] }
     no_steal[pre_piles, post_piles]
-    pre_hand = post_hand
     pre_table = post_table
+    no collected
   }
 }
 
