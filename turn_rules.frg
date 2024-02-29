@@ -155,7 +155,7 @@ pred ttadak[played, flipped: Card,
     }
     post_table = pre_table - x -y -played -flipped
   } or {
-    no disj x,y : pre_table | {same4months[x,y,played,flipped]}
+    no disj x,y : pre_table | { same4months[x,y,played,flipped] }
     no_steal[pre_piles, post_piles]
     pre_hand = post_hand
     pre_table = post_table
