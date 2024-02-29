@@ -208,7 +208,7 @@ pred one_player_go_helper[
     step2[pre_hand, hand2.cardset, pre_table, table2.cardset,
           hand_match2.maybecard, table_match2.maybecard, discard.maybecard]
     step3_flipping[flipped, flip_match3.maybecard, table_match3.maybecard,
-                   table2.cardset, table3.cardset, pre_deck, deck3]
+                   table2.cardset, table3.cardset, pre_deck, deck3.cardset]
     pile3.cardset = pre_my_pile
       + hand_match2.maybecard + table_match2.maybecard + table_match3.maybecard + flip_match3.maybecard
     ppeok[flipped, hand_match2.maybecard, table_match2.maybecard,
