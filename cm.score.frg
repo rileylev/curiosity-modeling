@@ -2,54 +2,53 @@
 
 open "cm.sigs.frg"
 
-pred redPoetryMatchingRibbon[p: Player] {
-  #{c: Card | c in p.hand and c.suit = Ribbon and 
+pred redPoetryMatchingRibbon[hand: set Card] {
+  #{c: Card | c in hand and c.suit = Ribbon and 
   c.month = Jan or c.month = Feb or c.month = Mar} = 3
 }
 
-pred redMatchingRibbon[p: Player] {
-  #{c: Card | c in p.hand and c.suit = Ribbon and 
+pred redMatchingRibbon[hand: set Card] {
+  #{c: Card | c in hand and c.suit = Ribbon and 
   c.month = Apr or c.month = May or c.month = Jul} = 3
 }
 
-pred blueMatchingRibbon[p: Player] {
-  #{c: Card | c in p.hand and c.suit = Ribbon and 
+pred blueMatchingRibbon[hand: set Card] {
+  #{c: Card | c in hand and c.suit = Ribbon and 
   (c.month = Jun or c.month = Sep or c.month = Oct)} = 3
 }
 
-pred godori[p: Player] {
-  #{c: Card | c in p.hand and c.suit = Animal and 
+pred godori[hand: set Card] {
+  #{c: Card | c in hand and c.suit = Animal and 
   (c.month = Feb or c.month = Apr or c.month = Aug)} = 3
 }
 
-fun countSuitInHand[p: Player, s: Suit]: Int {
-    #{c: Card | c in p.hand and c.suit = s}
+fun countSuitInHand[hand: set Card, s: Suit]: Int {
+    #{c: Card | c in hand and c.suit = s}
 }
 
-fun countJunkInHand[p: Player]: Int {
-    add[countSuitInHand[p, Junk], multiply[countSuitInHand[p, DoubleJunk], 2]]
+fun countJunkInHand[hand: set Card]: Int {
+    add[countSuitInHand[hand, Junk1], countSuitInHand[hand, Junk2], multiply[countSuitInHand[hand, DoubleJunk], 2]]
 }
 
 -- simplified scoring logic. No special case scoring
-fun score[p: Player]: Int {
-    sum[
-        (countSuitInHand[p, Bright] >= 3 =>
-        countSuitInHand[p, Bright] else 0),
+fun score[hand: set Card]: Int {
+    add[
+        (countSuitInHand[hand, Bright] >= 3 =>
+        countSuitInHand[hand, Bright] else 0),
 
-        (countSuitInHand[p, Ribbon] >= 5 =>
-        subtract[countSuitInHand[p, Ribbon], 4] else 0),
+        (countSuitInHand[hand, Ribbon] >= 5 =>
+        subtract[countSuitInHand[hand, Ribbon], 4] else 0),
 
-        (countSuitInHand[p, Animal] >= 5 =>
-        subtract[countSuitInHand[p, Animal], 4] else 0),
+        (countSuitInHand[hand, Animal] >= 5 =>
+        subtract[countSuitInHand[hand, Animal], 4] else 0),
 
-        (countJunkInHand[p] >= 10 =>
-        subtract[countJunkInHand[p], 9] else 0)
+        (countJunkInHand[hand] >= 10 =>
+        subtract[countJunkInHand[hand], 9] else 0)
     ]
 }
 
-pred winning {
-  some p: Player | {
-    score[p] >= 3
+pred winning[t: Turn] {
+  some i: Int | {
+    score[t.players[i]] >= 3
   }
 }
-

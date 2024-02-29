@@ -3,7 +3,12 @@
 open "cm.sigs.frg"
 
 pred twoJunkForMonth[m: Month] {
-  #{card: Card | card.month = m and card.suit = Junk} = 2
+  one card: Card | card.month = m implies {
+    card.suit = Junk1
+  }
+  one card: Card | card.month = m implies {
+    card.suit = Junk2
+  }
 }
 
 pred twoJunkUnlessDec {
@@ -18,6 +23,26 @@ pred twoJunkUnlessDec {
   twoJunkForMonth[Oct]
   twoJunkForMonth[Nov]
 }
+
+// pred oneEachForNonJunk[m: Month] {
+//   #{card: Card | card.month = m and card.suit = Bright} < 2
+//   #{card: Card | card.month = m and card.suit = Animal} < 2
+//   #{card: Card | card.month = m and card.suit = Ribbon} < 2
+//   #{card: Card | card.month = m and card.suit = DoubleJunk} < 2
+// }
+
+// pred oneEachForNonJunkAll {
+//   oneEachForNonJunk[Jan]
+//   oneEachForNonJunk[Feb]
+//   oneEachForNonJunk[Mar]
+//   oneEachForNonJunk[Apr]
+//   oneEachForNonJunk[May]
+//   oneEachForNonJunk[Jun]
+//   oneEachForNonJunk[Jul]
+//   oneEachForNonJunk[Sep]
+//   oneEachForNonJunk[Oct]
+//   oneEachForNonJunk[Nov]
+// }
 
 pred fourOfEachSuite {
   #{card: Card | card.month = Jan} = 4
@@ -46,7 +71,7 @@ pred suitMonthCombo {
      c.month = Oct)
     implies c.suit != Bright and c.suit != DoubleJunk
 
-    (c.month = May or c.month = Sep) 
+    (c.month = May or c.month = Sep)
     implies c.suit != Bright and c.suit != Animal
 
     c.month = Aug implies c.suit != Ribbon and c.suit != DoubleJunk

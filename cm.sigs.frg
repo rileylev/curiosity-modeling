@@ -4,7 +4,7 @@
 abstract sig Suit {}
 abstract sig Month {}
 
-one sig Bright, Animal, Ribbon, Junk, DoubleJunk extends Suit {}
+one sig Bright, Animal, Ribbon, Junk1, Junk2, DoubleJunk extends Suit {}
 one sig Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec extends Month {}
 
 sig Card {
