@@ -16,7 +16,8 @@ sig Card {
 sig Turn {
     -- player ID to card mapping
     -- We _could_ hard-code this, but we wanted to leave a bit of wiggle room for future expansion
-    players: set Int -> Card,
+    players: set Int -> Card, // hands
+    stockpiles: set Int -> Card
     table: set Card,
     deck: set Card,
     -- the player who WILL go
