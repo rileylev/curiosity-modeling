@@ -28,6 +28,17 @@ It failed to adequately represent events like winning. Furthermore, the state of
 
 The existence of duplicate cards made keeping track of all locations of the Card too complex
 
+### Sigs
+- Suit and Month are the attributes for a card. 
+-- we split the Junk suit into Junk1 and Junk2 because it's the only kind of card that can have duplicates. 
+- Card represents the individual card
+- Turn represents the current state at the beginning of a turn (players' hands and stockpiles, the cards on the table, the deck, and whose turn it is)
+- Game represents a sequence of turns
+- Wrappers around higher-order objects. 
+-- CardSetWrapper - this sig holds a set of cards 
+-- MaybeCard - this is either a card or none
+-- CardSetArray - this holds an array of sets of cards so we can quantify/iterate over players' hands for example
+
 ## Usage
 Because of the large size of the model, it may feel overwhelming when you first see the sterling visualizer output. We recommend making as many fields as possible into properties, as that greatly reduces the clutter. Seong-Heon personally runs the graph view with all fields of `Turn` made into properties instead of arrow & nodes.
 Furthermore, make sure to enforce a rather tight bound on how many turns you want in your output. Without this, model will take very long to run. 
