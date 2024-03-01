@@ -36,7 +36,7 @@ sig CardSetWrapper {
 }
 
 sig MaybeCard {
-  maybecard: set Card
+  maybecard: lone Card
 }
 
 sig CardSetArray {
