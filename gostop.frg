@@ -66,7 +66,7 @@ pred relaxed_traces {
 
 run {
     relaxed_traces
-}for exactly 20 cards for {next is linear}
+} for exactly 20 Card for {next is linear}
 
 pred traces {
     cardWellformed
