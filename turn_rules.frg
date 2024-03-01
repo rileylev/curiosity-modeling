@@ -178,18 +178,6 @@ pred ttadak[played, flipped: Card,
 // the winner double money.
 
 
-/* pred turn_rules_turn[player: Int, */
-/*                      pre_hands:  set Int -> Card, */
-/*                      pre_pile: set Int -> Card, */
-/*                      pre_table : set Card, */
-/*                      pre_deck : set Card, */
-/*                      post_hands: set Int -> Card, */
-/*                      post_pile: set Int -> Card, */
-/*                      post_table: set Card, */
-/*                      post_deck: set Card]{ */
-
-/* } */
-
 pred one_player_go_helper[
     pre_hand, pre_my_pile, pre_table, pre_deck: set Card,
     pre_other_piles: set Int -> Card,

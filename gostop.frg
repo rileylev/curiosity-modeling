@@ -38,9 +38,9 @@ pred nextTurn[prev, post: Turn] {
     -- Action
     post.playing = nextPlayer[prev]
     -- If a card is gone from the deck, it must be with the player who played in the prev turn or on the table
-    all c: Card | (c in prev.deck and not c in post.deck) implies {
-        c in post.table or c in post.players[prev.playing]
-    }
+    /* all c: Card | (c in prev.deck and not c in post.deck) implies { */
+    /*     c in post.table or c in post.players[prev.playing] */
+    /* } */
     // TODO: do we enforce hands are disjoint from each other + the table + the deck?
     one_player_go[prev.playing,
                   prev.players,
@@ -54,10 +54,24 @@ pred nextTurn[prev, post: Turn] {
     staysSameIfNotPrevPlaying[prev, post]
 }
 
+pred relaxed_traces {
+    // cards are extensional
+    no disj x,y : Card | {
+        x.suit = y.suit
+        x.month = y.month
+    }
+    // two turns
+    some disj x,y : Turn | nextTurn[x,y]
+}
+
+run {
+    relaxed_traces
+}for exactly 20 cards for {next is linear}
+
 pred traces {
     cardWellformed
     turnWellformed
-    // initial[Game.firstTurn]
+    initial[Game.firstTurn]
     no prev: Turn | Game.next[prev] = Game.firstTurn
 
     all t: Turn | some Game.next[t] implies nextTurn[t, Game.next[t]]
